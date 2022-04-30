@@ -16,6 +16,7 @@
  */
 package org.apache.rocketmq.console.model;
 
+import org.apache.rocketmq.common.message.MessageClientExt;
 import org.apache.rocketmq.common.message.MessageExt;
 import com.google.common.base.Charsets;
 import org.springframework.beans.BeanUtils;
@@ -54,6 +55,15 @@ public class MessageView {
         BeanUtils.copyProperties(messageExt, messageView);
         if (messageExt.getBody() != null) {
             messageView.setMessageBody(new String(messageExt.getBody(), Charsets.UTF_8));
+        }
+        //主要是这里判断下，是否是这个类，是就把原来的msgId拿出来
+
+        if(messageExt instanceof MessageClientExt){
+
+            MessageClientExt ext = (MessageClientExt) messageExt;
+
+            messageView.setMsgId(ext.getOffsetMsgId());
+
         }
         return messageView;
     }
